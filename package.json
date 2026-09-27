@@ -1,0 +1,20 @@
+{
+  "name": "e6bt-mobile",
+  "version": "0.4.0",
+  "private": true,
+  "scripts": {
+    "android:add": "cap add android",
+    "ios:add": "cap add ios",
+    "sync": "cap sync"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/ios": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0"
+  }
+}
+
+

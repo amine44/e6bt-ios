@@ -1,0 +1,34 @@
+workflows:
+  e6bt-ios:
+    name: E6BT iOS signed build
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      node: 22
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.e6bt.pilot.twa
+    scripts:
+      - name: Install locked dependencies and sync bundled tools
+        script: |
+          set -eu
+          npm ci
+          npx cap sync ios
+      - name: Apply signing profiles
+        script: xcode-project use-profiles
+      - name: Set unique build number
+        script: |
+          set -eu
+          cd ios/App
+          agvtool new-version -all "$((BUILD_NUMBER + 1))"
+      - name: Build signed IPA
+        script: |
+          set -eu
+          cd ios/App
+          xcode-project build-ipa --project App.xcodeproj --scheme App
+    artifacts:
+      - ios/App/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    # No automatic upload or App Store submission is enabled.
+    # Configure App Store Connect publishing after the first build is reviewed.

@@ -1,0 +1,208 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Holding Pattern Calculator Preview</title><style>body{margin:0;background:#eaf0f5}.hpcalc{--hp-ink:#183249;--hp-muted:#536a7c;--hp-line:#dce5ec;color:var(--hp-ink);color-scheme:light;background:#f3f7fa;border:1px solid var(--hp-line);border-radius:20px;max-width:1220px;margin:24px auto;padding:clamp(16px,3vw,30px);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;box-sizing:border-box;container-type:inline-size}
+.hpcalc *{box-sizing:border-box}.hpcalc [hidden]{display:none!important}.hpcalc .hp-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px}.hpcalc .hp-eyebrow{font-size:10px;letter-spacing:2px;color:#117c84;font-weight:800;margin:0 0 8px}.hpcalc h2{font-size:clamp(24px,3vw,34px);font-weight:750;line-height:1.2;letter-spacing:-1px;margin:0;color:var(--hp-ink)}.hpcalc .hp-intro{font-size:14px;color:var(--hp-muted);margin:10px 0 0}.hpcalc .hp-version{border:1px solid #c9dfe5;border-radius:6px;color:#177582;padding:2px 8px;font-size:12px}
+.hpcalc .hp-layout{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;align-items:start}.hpcalc .hp-card{background:white;border:1px solid var(--hp-line);border-radius:14px;padding:22px;box-shadow:0 3px 12px #173d570a;min-width:0}.hpcalc h3{font-size:17px;color:var(--hp-ink);margin:0 0 16px;line-height:1.4;font-weight:700}.hpcalc .hp-visual-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.hpcalc .hp-caption{display:block;color:var(--hp-muted);font-size:10px;letter-spacing:1.5px;font-weight:700}.hpcalc .hp-entry{display:block;font-size:27px;line-height:1.5;color:#137783}.hpcalc .hp-boundary{font-size:12px;color:#8e6121;background:#fff5df;border-radius:6px;padding:8px 12px;margin:12px 0 0}.hpcalc .hp-boundary:empty{display:none}.hpcalc svg{display:block;width:100%;height:auto;overflow:visible}.hpcalc .hp-legend{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:center;font-size:12px;color:var(--hp-muted)}.hpcalc .hp-legend span:before{content:"";display:inline-block;width:10px;height:10px;margin-right:5px;border-radius:2px;background:#d9eee2}.hpcalc .hp-legend .hp-parallel:before{background:#dddff7}.hpcalc .hp-legend .hp-teardrop:before{background:#f9dfd5}.hpcalc .hp-legend .hp-path:before{height:0;width:17px;border-top:2px dashed #0784c3;background:none}.hpcalc .hp-visual-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0}
+.hpcalc label{display:flex;flex-direction:column;gap:6px;margin:0 0 15px;color:var(--hp-muted);font-size:12px;font-weight:600}.hpcalc input,.hpcalc select{font:500 16px/1.4 system-ui,sans-serif;display:block;width:100%;min-width:0;height:44px;padding:9px 11px;border:1px solid #c7d5df;border-radius:7px;background:white;color:var(--hp-ink);box-shadow:none}.hpcalc input[aria-invalid=true]{border-color:#b9442c}.hpcalc .hp-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.hpcalc .hp-divider{height:1px;background:var(--hp-line);margin:20px 0}.hpcalc .hp-fine{color:var(--hp-muted);font-size:11px;line-height:1.6;margin:8px 0 0}.hpcalc .hp-actions{display:flex;gap:10px;margin-top:20px}.hpcalc button{cursor:pointer;text-transform:none;font:600 12px/1.4 system-ui,sans-serif;letter-spacing:normal;border-radius:7px;min-height:38px;padding:9px 13px;box-shadow:none}.hpcalc .hp-small-btn{color:#285269;border:1px solid #ccdae3;background:white}.hpcalc .hp-small-btn:hover{background:#eff6f8}.hpcalc .hp-primary{color:white;background:#164a60;border:1px solid #164a60}.hpcalc :focus-visible{outline:3px solid #168da6;outline-offset:3px}.hpcalc .hp-error{color:#a0402c;font-size:12px;margin:12px 0 0}.hpcalc .hp-error:empty{display:none}
+.hpcalc .hp-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:20px;background:#fafdff}.hpcalc .hp-results span{font-size:11px;color:var(--hp-muted);display:block}.hpcalc .hp-results strong{display:block;font-size:21px;font-variant-numeric:tabular-nums;color:#18576d;overflow-wrap:anywhere}.hpcalc .hp-instructions{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:20px}.hpcalc ol{padding-left:21px;margin:0;color:#466175;font-size:13px}.hpcalc li+li{margin-top:8px}.hpcalc .hp-guide{margin:20px 0;color:var(--hp-muted);font-size:12px}.hpcalc summary{cursor:pointer;color:#265267;font-size:13px;font-weight:650}.hpcalc .hp-footer{border-top:1px solid var(--hp-line);padding-top:15px;font-size:11px;color:var(--hp-muted)}.hpcalc a{color:#126e85;text-decoration:underline}
+@container(max-width:780px){.hpcalc .hp-layout{grid-template-columns:1fr}.hpcalc .hp-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container(max-width:440px){.hpcalc .hp-card{padding:16px}.hpcalc .hp-instructions,.hpcalc .hp-row{grid-template-columns:1fr}.hpcalc .hp-results strong{font-size:19px}.hpcalc .hp-entry{font-size:24px}}
+@media(max-width:600px){.hpcalc .hp-layout,.hpcalc .hp-instructions,.hpcalc .hp-row{grid-template-columns:1fr}.hpcalc .hp-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{.hpcalc{background:white;border:0;padding:0}.hpcalc button,.hpcalc .hp-controls,.hpcalc .hp-guide{display:none}.hpcalc .hp-layout{display:block}.hpcalc .hp-card{break-inside:avoid;box-shadow:none}.hpcalc svg{max-width:450px;margin:auto}}
+
+.hpcalc .hp-legend .hp-wind:before{background:#c45824}
+</style><link rel="stylesheet" href="../tool-mobile.css"></head><body>
+<div class="hpcalc" data-hp-root id="holding-demo">
+  <header class="hp-header"><div><p class="hp-eyebrow">FLIGHT PLANNING TOOLKIT</p><h2>Holding Pattern Calculator</h2><p class="hp-intro">Visualize the entry. Understand the hold.</p></div><span class="hp-version">2.0.1</span></header>
+  <noscript>Enable JavaScript to calculate an entry and display the diagram.</noscript>
+  <div class="hp-layout">
+    <section class="hp-visual hp-card" aria-label="Holding pattern visualization">
+      <div class="hp-visual-top"><div><span class="hp-caption">RECOMMENDED ENTRY</span><strong data-hp="entry" class="hp-entry" aria-live="polite">—</strong></div><button type="button" class="hp-small-btn" data-hp="orientation" aria-pressed="false">North up</button></div>
+      <p data-hp="boundary" class="hp-boundary" role="status"></p>
+      <svg data-hp="diagram" viewBox="0 0 600 570" role="img" aria-label="Holding diagram; enter valid inputs to draw"></svg>
+      <div class="hp-legend"><span class="hp-direct">Direct</span><span class="hp-parallel">Parallel</span><span class="hp-teardrop">Teardrop</span><span class="hp-path">Entry path</span><span class="hp-wind">Wind</span></div>
+      <div class="hp-visual-actions"><button type="button" class="hp-small-btn" data-hp="path-toggle" aria-pressed="true">Hide entry path</button><button type="button" class="hp-small-btn" data-hp="instructions-toggle" aria-expanded="true">Hide instructions</button></div>
+      <p class="hp-fine">Schematic, not to scale. Sectors represent arrival headings at the fix; the colored areas are not protected-airspace boundaries. Wind changes heading results, not the schematic track.</p>
+    </section>
+    <section class="hp-card hp-controls" aria-label="Holding calculator inputs">
+      <h3>Set up your hold</h3>
+      <label>Aircraft heading at the fix (°)<input data-hp="heading" type="number" min="0" max="360" step="any" value="150"></label>
+      <div class="hp-row"><label>Course entered as<select data-hp="course-mode"><option value="inbound">Inbound</option><option value="outbound">Outbound</option></select></label><label>Hold course (°)<input data-hp="course" type="number" min="0" max="360" step="any" value="0"></label></div>
+      <div class="hp-row"><label>Hold turns<select data-hp="turn"><option value="right">Right (standard)</option><option value="left">Left</option></select></label><label>Inbound leg time<select data-hp="leg"><option value="60">1:00 · ≤14,000 ft</option><option value="90">1:30 · &gt;14,000 ft</option></select></label></div>
+      <p class="hp-fine">Use the same reference for aircraft heading, hold course and wind direction: all true or all magnetic. Published distance or timing overrides the selected time.</p>
+      <div class="hp-divider"></div><h3>Wind correction</h3>
+      <label>Correction mode<select data-hp="wind-mode"><option value="auto">Calculate from wind</option><option value="manual">Enter inbound WCA manually</option><option value="none">No wind</option></select></label>
+      <div data-hp="auto-fields"><div class="hp-row"><label>True airspeed (kt)<input data-hp="tas" type="number" min="1" step="any" value="120"></label><label>Wind speed (kt)<input data-hp="wind-speed" type="number" min="0" step="any" value="10"></label></div><label>Wind direction FROM (°)<input data-hp="wind-dir" type="number" min="0" max="360" step="any" value="30"></label></div>
+      <label data-hp="manual-fields" hidden>Inbound WCA (°; +right / −left)<input data-hp="manual-wca" type="number" min="-30" max="30" step="any" value="0"></label>
+      <label data-hp="factor-field">Outbound correction<select data-hp="factor"><option value="3">3× opposite inbound WCA</option><option value="1">1× opposite inbound WCA</option></select></label>
+      <p class="hp-fine">Automatic inbound WCA is rounded to whole degrees before multiplying. 3× is an initial holding correction, not an exact outbound ground track. Adjust using observed drift and inbound timing.</p>
+      <div class="hp-actions"><button type="button" data-hp="calculate" class="hp-primary">Calculate</button><button type="button" data-hp="reset" class="hp-small-btn">Reset</button></div>
+      <p data-hp="error" class="hp-error" role="status"></p>
+    </section>
+  </div>
+  <section class="hp-results hp-card" aria-label="Calculated courses and headings" aria-live="polite" aria-atomic="true">
+    <div><span>Inbound course</span><strong data-hp="in-course">—</strong></div><div><span>Outbound course</span><strong data-hp="out-course">—</strong></div><div><span>Inbound heading</span><strong data-hp="in-heading">—</strong></div><div><span>Outbound heading · starting</span><strong data-hp="out-heading">—</strong></div>
+    <div><span>Inbound WCA</span><strong data-hp="in-wca">—</strong></div><div><span>Outbound WCA · starting</span><strong data-hp="out-wca">—</strong></div><div><span>Inbound ground speed</span><strong data-hp="in-gs">—</strong></div><div><span>Entry outbound course</span><strong data-hp="entry-course">—</strong></div>
+  </section>
+  <section data-hp="instructions" class="hp-instructions hp-card"><div><h3>Entry sequence</h3><ol data-hp="entry-steps"></ol></div><div><h3>Once established</h3><ol data-hp="hold-steps"></ol></div></section>
+  <details class="hp-guide"><summary>How to read this calculator</summary><p>Direct, parallel and teardrop divide the arrival-heading circle into 180°, 110° and 70° sectors. The left-turn pattern mirrors the right-turn pattern. Within 5° of a dividing line, both adjacent entries are displayed.</p><p>The blue dashed line illustrates entry and the dark racetrack illustrates the established hold. Aircraft-up rotates the view with your arrival heading. Switching inbound/outbound preserves the same physical hold.</p><p>Parallel entry is drawn using the opposite-direction return turn shown in the diagram. Follow the applicable procedure and your flight training. The drawing does not model turn radius, terrain, protected airspace or wind drift through turns.</p><p>Use the aircraft POH/AFM, published hold, applicable speed limits and ATC instructions. This is a planning and training aid, not flight guidance.</p></details>
+  <footer class="hp-footer">Holding Pattern Calculator · Flight planning and training</footer>
+</div>
+<script>(function(scope){
+  'use strict';
+  const norm=v=>((v%360)+360)%360, rad=v=>v*Math.PI/180, deg=v=>v*180/Math.PI;
+  function range(v,min,max,label){if(!Number.isFinite(v)||v<min||v>max)throw new Error(label+' must be between '+min+' and '+max+'.');return v;}
+  const angle=(v,label)=>norm(range(v,0,360,label));
+  function entryFor(relative){return relative>=110&&relative<=180?'Teardrop':relative>180&&relative<290?'Parallel':'Direct';}
+  function entry(heading,inbound,turn){
+    angle(heading,'Aircraft heading');angle(inbound,'Inbound course');if(!['right','left'].includes(turn))throw new Error('Choose right or left turns.');
+    const relative=norm((heading-inbound)*(turn==='right'?1:-1));
+    const nominal=entryFor(relative),choices=[nominal];
+    for(const boundary of [110,180,290]){const distance=Math.abs(((relative-boundary+540)%360)-180);if(distance<=5+1e-9){for(const e of [entryFor(norm(boundary-.001)),entryFor(norm(boundary+.001))])if(!choices.includes(e))choices.push(e);}}
+    return {nominal,choices,relative};
+  }
+  function wind(course,tas,wd,ws){
+    range(tas,1,1000,'True airspeed (kt)');angle(wd,'Wind direction');range(ws,0,500,'Wind speed (kt)');
+    const cross=ws*Math.sin(rad(wd-course)),head=ws*Math.cos(rad(wd-course));
+    if(Math.abs(cross)>tas)throw new Error('Wind is too strong to maintain the selected course.');
+    const wca=deg(Math.asin(cross/tas)),gs=Math.sqrt(Math.max(0,tas*tas-cross*cross))-head;
+    if(gs<=1e-8)throw new Error('Wind prevents positive ground speed on a required leg.');
+    return {wca,heading:norm(course+wca),gs,head};
+  }
+  function calculate(p){
+    const heading=angle(p.heading,'Aircraft heading'),course=angle(p.course,'Hold course');
+    if(!['inbound','outbound'].includes(p.courseMode))throw new Error('Choose inbound or outbound course.');
+    const inbound=p.courseMode==='inbound'?course:norm(course+180),outbound=norm(inbound+180),selection=entry(heading,inbound,p.turn);
+    const teardrop=norm(outbound+(p.turn==='right'?-30:30));
+    const entryCourse=selection.nominal==='Teardrop'?teardrop:outbound;
+    let inWca=0,outWca=0,inGs=null,entryHeading=entryCourse,head=null;
+    if(!['auto','manual','none'].includes(p.windMode))throw new Error('Choose a wind correction mode.');
+    if(p.windMode!=='none' && ![1,3].includes(p.factor))throw new Error('Choose a 1× or 3× outbound correction.');
+    if(p.windMode==='auto'){
+      const i=wind(inbound,p.tas,p.windDir,p.windSpeed);wind(outbound,p.tas,p.windDir,p.windSpeed);
+      // Match the reference calculators' whole-degree holding correction display.
+      // Round before multiplying so a 2° inbound correction produces 6° outbound.
+      inWca=Math.round(i.wca);inGs=i.gs;head=i.head;
+      entryHeading=wind(entryCourse,p.tas,p.windDir,p.windSpeed).heading;
+    }else if(p.windMode==='manual'){
+      inWca=range(p.manualWca,-30,30,'Manual inbound WCA');entryHeading=selection.nominal==='Teardrop'?null:norm(outbound-inWca);
+    }
+    outWca=p.windMode==='none'?0:-p.factor*inWca;
+    if(Math.abs(outWca)>=90)throw new Error('The outbound starting correction reaches 90°. This rule of thumb is unsuitable for these conditions.');
+    range(p.leg,60,90,'Inbound time');if(![60,90].includes(p.leg))throw new Error('Choose a supported leg time.');
+    return {heading,inbound,outbound,selection,teardrop,entryCourse,entryHeading,inWca,outWca,inHeading:norm(inbound+inWca),outHeading:norm(outbound+outWca),inGs,head,turn:p.turn,leg:p.leg,windMode:p.windMode};
+  }
+  const api={norm,rad,deg,range,angle,entry,wind,calculate};
+  if(typeof module==='object'&&module.exports)module.exports=api;else scope.HoldingMath=api;
+})(typeof window==='object'?window:globalThis);
+
+</script><script>(function(){
+  'use strict';
+  const M=window.HoldingMath, NS='http://www.w3.org/2000/svg';
+  const bearing=v=>String(Math.round(M.norm(v))%360).padStart(3,'0')+'°';
+  const num=v=>String(Number(v.toFixed(1)));
+  const correction=v=>Math.abs(v)<0.05?'0°':num(Math.abs(v))+'° '+(v>0?'R':'L');
+  function initialize(root){
+    if(root.dataset.hpReady)return;root.dataset.hpReady='true';
+    const $=k=>root.querySelector('[data-hp="'+k+'"]');
+    let aircraftUp=false,showPath=true,last=null,previousMode=$('course-mode').value;
+    const outputs=['entry','in-course','out-course','in-heading','out-heading','in-wca','out-wca','in-gs','entry-course'];
+    const inputKeys=['heading','course-mode','course','turn','leg','wind-mode','tas','wind-speed','wind-dir','manual-wca','factor'];
+    inputKeys.forEach(k=>{$(k).id=root.id+'-'+k;});
+    $('instructions').id=root.id+'-instructions';$('instructions-toggle').setAttribute('aria-controls',$('instructions').id);
+    $('diagram').id=root.id+'-diagram';$('path-toggle').setAttribute('aria-controls',$('diagram').id);
+    function read(k){const el=$(k);if(el.value.trim()===''||!Number.isFinite(el.valueAsNumber)){el.setAttribute('aria-invalid','true');throw new Error('Enter '+(el.closest('label')?.firstChild.textContent.trim()||k)+'.');}if(!el.validity.valid){el.setAttribute('aria-invalid','true');throw new Error('Check the allowed range for '+(el.closest('label')?.firstChild.textContent.trim()||k)+'.');}return el.valueAsNumber;}
+    function data(){const mode=$('wind-mode').value;return {heading:read('heading'),course:read('course'),courseMode:$('course-mode').value,turn:$('turn').value,leg:Number($('leg').value),windMode:mode,factor:Number($('factor').value),tas:mode==='auto'?read('tas'):null,windSpeed:mode==='auto'?read('wind-speed'):null,windDir:mode==='auto'?read('wind-dir'):null,manualWca:mode==='manual'?read('manual-wca'):0};}
+    function list(key,items){$(key).replaceChildren(...items.map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));}
+    function instructions(d){
+      const turn=d.turn,opposite=turn==='right'?'left':'right',entry=d.selection.nominal;
+      const arrival='Arrive at the fix on heading '+bearing(d.heading)+'.';
+      const entryLeg=d.entryHeading===null?'Fly course '+bearing(d.entryCourse)+' into the holding side; determine its wind correction separately.':'Fly the entry outbound course '+bearing(d.entryCourse)+' using heading '+bearing(d.entryHeading)+'.';
+      let steps;
+      if(entry==='Direct')steps=[arrival,'Make the published '+turn+' turn into the outbound leg.','Continue with the established-hold sequence.'];
+      else if(entry==='Teardrop')steps=[arrival,entryLeg+' This course is 30° inside the outbound course.','Use a one-minute entry leg unless the procedure specifies otherwise, then turn '+turn+' to intercept inbound.','Rejoin course '+bearing(d.inbound)+' and continue to the fix.'];
+      else steps=[arrival,'Parallel the inbound course outbound on the nonholding side: course '+bearing(d.outbound)+', heading '+bearing(d.entryHeading)+'.','After the entry leg (normally one minute), make the '+opposite+' return turn shown in the diagram, continuing past the inbound heading to intercept.','Establish course '+bearing(d.inbound)+' inbound; after the fix, use '+turn+' turns in the hold.'];
+      list('entry-steps',steps);
+      const time=d.leg===60?'1:00':'1:30';
+      list('hold-steps',['Cross the fix on inbound course '+bearing(d.inbound)+' using heading '+bearing(d.inHeading)+'.','Turn '+turn+' toward the outbound starting heading '+bearing(d.outHeading)+'.','For a timed hold, initially use '+time+' outbound. Start timing abeam the fix, or when the outbound turn ends if abeam cannot be identified.','Turn '+turn+' to intercept inbound. Adjust subsequent outbound time and correction to achieve '+time+' inbound; published distance or timing takes precedence.']);
+    }
+    function svgNode(tag,attributes={},text){const n=document.createElementNS(NS,tag);Object.entries(attributes).forEach(([k,v])=>n.setAttribute(k,String(v)));if(text!==undefined)n.textContent=text;return n;}
+    function draw(d){
+      const svg=$('diagram');svg.replaceChildren();
+      if(!d){svg.setAttribute('aria-label','Holding diagram unavailable: check inputs.');svg.append(svgNode('text',{x:300,y:280,'text-anchor':'middle',fill:'#64788a','font-size':17},'Enter valid inputs to show the hold'));return;}
+      svg.setAttribute('aria-label',d.selection.nominal+' entry, '+d.turn+' turns, inbound '+bearing(d.inbound)+', outbound '+bearing(d.outbound)+'. '+(aircraftUp?'Aircraft-up':'North-up')+' schematic.');
+      const cx=300,cy=280,R=225,rotation=aircraftUp?d.heading:0,sign=d.turn==='right'?1:-1;
+      const point=(bearing,r=R)=>[cx+r*Math.sin(M.rad(bearing-rotation)),cy-r*Math.cos(M.rad(bearing-rotation))];
+      const local=(x,y)=>{const a=M.rad(d.inbound-rotation);return [cx+x*Math.cos(a)-y*Math.sin(a),cy+x*Math.sin(a)+y*Math.cos(a)];};
+      const pts=points=>points.map(p=>p.map(v=>v.toFixed(2)).join(',')).join(' ');
+      svg.append(svgNode('circle',{cx,cy,r:R+18,fill:'#fcfdff',stroke:'#cbd8e2','stroke-width':1.5}));
+      for(const [start,end,fill] of [[-70,110,'#e0f1e6'],[110,180,'#fbe4d9'],[180,290,'#e4e5fa']]){
+        const a=point(d.inbound+sign*start+180),b=point(d.inbound+sign*end+180);
+        svg.append(svgNode('path',{d:`M ${cx} ${cy} L ${a.join(' ')} A ${R} ${R} 0 ${end-start>180?1:0} ${sign>0?1:0} ${b.join(' ')} Z`,fill,stroke:'#fff','stroke-width':1.5}));
+      }
+      for(let a=0;a<360;a+=10){const p=point(a,R+3),q=point(a,R+(a%30===0?12:7));svg.append(svgNode('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],stroke:'#a9bdcc','stroke-width':a%30===0?1.5:1}));}
+      for(const [a,label] of [[0,'N'],[90,'E'],[180,'S'],[270,'W']]){const p=point(a,R+32);svg.append(svgNode('text',{x:p[0],y:p[1]+5,'text-anchor':'middle',fill:'#29465e','font-weight':700,'font-size':16},label));}
+      function poly(points,color,width=3,dash){const attrs={points:pts(points),fill:'none',stroke:color,'stroke-width':width,'stroke-linejoin':'round','stroke-linecap':'round'};if(dash){attrs['stroke-dasharray']=dash;svg.append(svgNode('polyline',{...attrs,stroke:'#fff','stroke-width':width+2.5}));}svg.append(svgNode('polyline',attrs));}
+      function arrow(x,y,hdg,color){const a=M.rad(hdg-rotation),p=[cx+x,cy+y];const tip=[p[0]+7*Math.sin(a),p[1]-7*Math.cos(a)],left=[p[0]-6*Math.sin(a)+4*Math.cos(a),p[1]+6*Math.cos(a)+4*Math.sin(a)],right=[p[0]-6*Math.sin(a)-4*Math.cos(a),p[1]+6*Math.cos(a)-4*Math.sin(a)];svg.append(svgNode('polygon',{points:pts([tip,left,right]),fill:color}));}
+      function arrowLocal(x,y,hdg,color){const p=local(x,y);arrow(p[0]-cx,p[1]-cy,d.inbound+hdg,color);}
+      // Continuous racetrack: inbound north in local coordinates, hold on the turn side.
+      const track=[[0,0]],width=90,len=115,r=width/2;
+      for(let i=0;i<=36;i++){const a=Math.PI+i*Math.PI/36;track.push([sign*(r+r*Math.cos(a)),r*Math.sin(a)]);}
+      track.push([sign*width,len]);
+      for(let i=0;i<=36;i++){const a=i*Math.PI/36;track.push([sign*(r+r*Math.cos(a)),len+r*Math.sin(a)]);}
+      track.push([0,0]);poly(track.map(p=>local(...p)),'#243f53',3);
+      arrowLocal(sign*width,70,180,'#243f53');arrowLocal(0,70,0,'#243f53');
+      if(showPath){
+        const start=point(d.heading+180,175);poly([start,[cx,cy]],'#0784c3',3.5,'5 4');
+        if(d.selection.nominal==='Direct')poly(track.map(p=>local(...p)),'#0784c3',3,'5 4');
+        else if(d.selection.nominal==='Teardrop'){
+          const L=134,h=M.rad(150),x=L*Math.sin(h),y=-L*Math.cos(h),radius=x/(1+Math.cos(M.rad(30))),centerX=x+radius*Math.cos(h),centerY=y+radius*Math.sin(h),path=[[0,0],[sign*x,y]];
+          for(let a=150;a<=360;a+=3)path.push([sign*(centerX-radius*Math.cos(M.rad(a))),centerY-radius*Math.sin(M.rad(a))]);path.push([0,0]);poly(path.map(p=>local(...p)),'#0784c3',3.5,'5 4');arrowLocal(sign*x*.65,y*.65,sign*150,'#0784c3');
+        }else{
+          const x=-9,y=128,radius=30,path=[[0,0],[-sign*9,25],[sign*x,y]];
+          for(let a=180;a>=-30;a-=3)path.push([sign*(x+radius+radius*Math.cos(M.rad(a))),y+radius*Math.sin(M.rad(a))]);path.push([0,35],[0,0]);poly(path.map(p=>local(...p)),'#0784c3',3.5,'5 4');arrowLocal(-sign*9,85,180,'#0784c3');
+        }
+      }
+      // Aircraft remains visible when the entry path is hidden.
+      const plane=point(d.heading+180,175);
+      const aircraft=svgNode('g',{'data-symbol':'aircraft',transform:`translate(${plane[0]} ${plane[1]}) rotate(${d.heading-rotation})`,role:'img','aria-label':'Aircraft heading '+bearing(d.heading)});
+      aircraft.append(svgNode('path',{d:'M 0 -18 C 2 -18 3 -14 3 -10 L 3 -4 L 16 4 L 16 8 L 3 4 L 3 12 L 8 16 L 8 19 L 0 16 L -8 19 L -8 16 L -3 12 L -3 4 L -16 8 L -16 4 L -3 -4 L -3 -10 C -3 -14 -2 -18 0 -18 Z',fill:'#075b83',stroke:'#fff','stroke-width':1.8,'stroke-linejoin':'round'}));
+      svg.append(aircraft);
+      // The wind arrow sits on the compass edge at the FROM bearing and points inward.
+      let windLabel=d.windMode==='none'?'NO WIND':'WIND: NOT ENTERED';
+      if(d.windMode==='auto'){
+        windLabel=d.windSpeed===0?'WIND: CALM':'WIND FROM '+bearing(d.windDir)+' / '+num(d.windSpeed)+' kt';
+        if(d.windSpeed>0){
+          const start=point(d.windDir,R+15),end=point(d.windDir,R-18);
+          const windGroup=svgNode('g',{'data-symbol':'wind',role:'img','aria-label':windLabel+'; arrow points downwind'});
+          windGroup.append(svgNode('line',{x1:start[0],y1:start[1],x2:end[0],y2:end[1],stroke:'#fff','stroke-width':7}));
+          windGroup.append(svgNode('line',{x1:start[0],y1:start[1],x2:end[0],y2:end[1],stroke:'#c45824','stroke-width':3.5}));svg.append(windGroup);
+          arrow(end[0]-cx,end[1]-cy,d.windDir+180,'#c45824');
+        }
+      }
+      svg.append(svgNode('text',{x:18,y:22,fill:'#a34820','font-size':12,'font-family':'system-ui, sans-serif','font-weight':650},windLabel));
+      svg.append(svgNode('circle',{cx,cy,r:5,fill:'#fff',stroke:'#23445c','stroke-width':2}));svg.append(svgNode('text',{x:cx-12,y:cy-13,'text-anchor':'end','font-size':11,fill:'#24485f','font-weight':700},'FIX'));
+      const caption=svgNode('text',{x:300,y:560,'text-anchor':'middle','font-size':11,fill:'#5e7485'},'IN '+bearing(d.inbound)+'   /   OUT '+bearing(d.outbound)+'   ·   '+d.turn.toUpperCase()+' TURNS');svg.append(caption);
+    }
+    function update(){
+      const mode=$('wind-mode').value;$('auto-fields').hidden=mode!=='auto';$('manual-fields').hidden=mode!=='manual';$('factor-field').hidden=mode==='none';
+      inputKeys.forEach(k=>$(k).removeAttribute('aria-invalid'));
+      try{const p=data();const d={...M.calculate(p),windDir:p.windDir,windSpeed:p.windSpeed};last=d;$('error').textContent='';$('entry').textContent=d.selection.nominal;
+        $('boundary').textContent=d.selection.choices.length>1?'Within 5° of a sector boundary: '+d.selection.choices.join(' or ')+'. The diagram shows '+d.selection.nominal+'.':'';
+        for(const [key,value] of Object.entries({'in-course':bearing(d.inbound),'out-course':bearing(d.outbound),'in-heading':bearing(d.inHeading),'out-heading':bearing(d.outHeading),'in-wca':correction(d.inWca),'out-wca':correction(d.outWca),'in-gs':d.inGs===null?'—':num(d.inGs)+' kt','entry-course':bearing(d.entryCourse)}))$(key).textContent=value;
+        instructions(d);draw(d);
+      }catch(e){last=null;outputs.forEach(k=>$(k).textContent='—');$('error').textContent=e.message;$('boundary').textContent='';list('entry-steps',['Enter valid inputs to calculate an entry.']);list('hold-steps',[]);draw(null);}
+    }
+    inputKeys.filter(k=>k!=='course-mode').forEach(k=>$(k).addEventListener('input',update));
+    $('course-mode').addEventListener('change',()=>{const value=$('course').valueAsNumber;if(previousMode!==$('course-mode').value&&Number.isFinite(value)&&value>=0&&value<=360)$('course').value=M.norm(value+180);previousMode=$('course-mode').value;update();});
+    $('calculate').addEventListener('click',update);
+    $('reset').addEventListener('click',()=>{for(const k of inputKeys){const el=$(k);if(el.tagName==='SELECT'){el.selectedIndex=0;}else el.value=el.defaultValue;}previousMode='inbound';aircraftUp=false;showPath=true;$('orientation').textContent='North up';$('orientation').setAttribute('aria-pressed','false');$('path-toggle').textContent='Hide entry path';$('path-toggle').setAttribute('aria-pressed','true');$('instructions').hidden=false;$('instructions-toggle').textContent='Hide instructions';$('instructions-toggle').setAttribute('aria-expanded','true');update();});
+    $('orientation').addEventListener('click',()=>{aircraftUp=!aircraftUp;$('orientation').textContent=aircraftUp?'Aircraft up':'North up';$('orientation').setAttribute('aria-pressed',String(aircraftUp));draw(last);});
+    $('path-toggle').addEventListener('click',()=>{showPath=!showPath;$('path-toggle').textContent=showPath?'Hide entry path':'Show entry path';$('path-toggle').setAttribute('aria-pressed',String(showPath));draw(last);});
+    $('instructions-toggle').addEventListener('click',()=>{const hide=!$('instructions').hidden;$('instructions').hidden=hide;$('instructions-toggle').textContent=hide?'Show instructions':'Hide instructions';$('instructions-toggle').setAttribute('aria-expanded',String(!hide));});
+    root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();update();}});
+    update();
+  }
+  function scan(){document.querySelectorAll('[data-hp-root]').forEach(initialize);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
+  new MutationObserver(records=>{if(records.some(r=>Array.from(r.addedNodes).some(n=>n.nodeType===1&&(n.matches('[data-hp-root]')||n.querySelector('[data-hp-root]')))))scan();}).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script></body></html>

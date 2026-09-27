@@ -1,0 +1,603 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>E6B Calculator Preview</title><style>body{margin:0;background:#eaf0f5}/* All styles are scoped to the calculator to avoid affecting the WordPress theme. */
+.e6b-wrap{--e6b-ink:#162b41;--e6b-muted:#526579;--e6b-line:#dce4ec;color:var(--e6b-ink);background:#f4f7fb;color-scheme:light;font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:1200px;margin:24px auto;padding:clamp(16px,3vw,32px);border:1px solid var(--e6b-line);border-radius:20px;box-sizing:border-box;container-type:inline-size}
+.e6b-wrap *{box-sizing:border-box}
+.e6b-wrap .e6b-header{display:flex;align-items:center;gap:14px}
+.e6b-wrap .e6b-header svg{width:36px;height:36px;flex:none}
+.e6b-wrap .eyebrow{font-size:10px;font-weight:800;letter-spacing:2px;color:#137d89;margin:0 0 4px}
+.e6b-wrap h2{font-size:clamp(26px,4vw,36px);line-height:1.2;letter-spacing:-1px;color:var(--e6b-ink);margin:0;font-weight:750}
+.e6b-wrap .version{margin-left:auto;border:1px solid #c7dce3;border-radius:6px;color:#147580;padding:2px 8px;font-size:12px}
+.e6b-wrap .intro{color:var(--e6b-muted);margin:14px 0 22px}
+.e6b-wrap .e6b-tabs{display:flex;gap:5px;flex-wrap:wrap;padding:6px;background:#e6edf4;border-radius:12px;margin-bottom:22px}
+.e6b-wrap button{font:inherit;cursor:pointer;text-transform:none;letter-spacing:normal}
+.e6b-wrap .tab-btn{background:transparent;border:0;border-radius:8px;padding:10px 12px;color:#42576b;font-size:13px;font-weight:650;line-height:1.4;box-shadow:none}
+.e6b-wrap .tab-btn:hover{background:#f4f7fb;color:#164d65}
+.e6b-wrap .tab-btn[aria-selected=true]{background:#163e54;color:white;box-shadow:0 2px 4px #18344b20}
+.e6b-wrap :focus-visible{outline:3px solid #148fa5;outline-offset:3px}
+.e6b-wrap .panel[hidden]{display:none!important}
+.e6b-wrap.e6b-flat .e6b-tabs{display:none}
+.e6b-wrap .panel+.panel,.e6b-wrap .grid+.grid{margin-top:20px}
+.e6b-wrap .grid.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.e6b-wrap .card{min-width:0;background:white;border:1px solid var(--e6b-line);border-radius:14px;padding:22px;box-shadow:0 3px 9px #173d5710}
+.e6b-wrap .card h3{color:var(--e6b-ink);font-size:17px;line-height:1.4;font-weight:700;margin:0 0 16px;letter-spacing:-.2px}
+.e6b-wrap .card p{font-size:13px;margin:0 0 16px}
+.e6b-wrap .form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.e6b-wrap .form.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.e6b-wrap label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;line-height:1.5;color:var(--e6b-muted);margin:0}
+.e6b-wrap label small{font-size:11px}
+.e6b-wrap input,.e6b-wrap select{display:block;min-width:0;width:100%;height:44px;padding:9px 11px;background:#fff;color:var(--e6b-ink);border:1px solid #c8d4df;border-radius:7px;font:500 16px/1.3 system-ui,sans-serif;box-shadow:none}
+.e6b-wrap input:focus,.e6b-wrap select:focus{border-color:#148fa5}
+.e6b-wrap input[readonly]{background:#eaf3f5;border-style:dashed;color:#146271}
+.e6b-wrap input[aria-invalid=true]{border-color:#b44b31}
+.e6b-wrap .results{display:grid;grid-template-columns:1fr;gap:0;background:#f0f6f8;border:1px solid #dbe9ed;border-radius:9px;overflow:hidden;font-variant-numeric:tabular-nums}
+.e6b-wrap .results>div{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 13px;min-width:0}
+.e6b-wrap .results>div+div{border-top:1px solid #dbe9ed}
+.e6b-wrap .results>div>span{font-size:12px;color:var(--e6b-muted)}
+.e6b-wrap .results b{font-weight:750;font-size:17px;color:#154e62;text-align:right;overflow-wrap:anywhere}
+.e6b-wrap .results em{font-style:normal;font-size:12px}
+.e6b-wrap canvas{width:100%;height:auto;display:block;aspect-ratio:1;max-width:560px;margin:auto;background:white}
+.e6b-wrap .muted,.e6b-wrap .note,.e6b-wrap small{color:var(--e6b-muted)}
+.e6b-wrap .btn{border:1px solid #cad8e2;border-radius:7px;background:#fff;color:#24495e;font-size:13px;padding:8px 16px;min-height:40px}
+.e6b-wrap .status{color:#994228;font-size:12px;margin:12px 0 0}
+.e6b-wrap .status:empty{display:none}
+.e6b-wrap .status.is-hint{color:var(--e6b-muted)}
+.e6b-wrap .diagram-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;font-size:12px;margin-top:14px}
+.e6b-wrap .diagram-legend span::before{content:"";display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:5px;background:currentColor}
+.e6b-wrap .footer-note{border-top:1px solid var(--e6b-line);padding-top:18px;margin:24px 0 0;color:var(--e6b-muted);font-size:12px}
+@container(max-width:780px){.e6b-wrap .grid.two{grid-template-columns:1fr}}
+@container(max-width:440px){.e6b-wrap .form,.e6b-wrap .form.three{grid-template-columns:1fr}.e6b-wrap .card{padding:16px}.e6b-wrap .tab-btn{padding:10px}.e6b-wrap .results>div{gap:8px}}
+@media(max-width:600px){.e6b-wrap .grid.two,.e6b-wrap .form,.e6b-wrap .form.three{grid-template-columns:1fr}}
+@media print{.e6b-wrap{padding:0;border:0;background:white}.e6b-wrap .e6b-tabs{display:none}.e6b-wrap .panel[hidden]{display:block!important}.e6b-wrap .card{break-inside:avoid;box-shadow:none}.e6b-wrap .grid.two{grid-template-columns:1fr}}
+</style><body>
+<div class="e6b-wrap" id="demo" data-e6b-root>
+  <div class="e6b-header">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8M3 16V8m0 8a9 9 0 0 0 18 0M3 8a9 9 0 0 1 18 0"/></svg>
+    <div><p class="eyebrow">FLIGHT PLANNING TOOLKIT</p><h2>E6B Calculator</h2></div><span class="version">2.0</span>
+  </div>
+
+  <p class="intro">Plan your heading, check performance, and convert units in one place.</p><noscript>This calculator requires JavaScript to calculate results.</noscript>
+  <div class="e6b-tabs" role="tablist" aria-label="E6B tools">
+    <button type="button" class="tab-btn" data-panel="wind"  role="tab" aria-selected="true">Wind/WCA</button>
+    <button type="button" class="tab-btn" data-panel="xwind" role="tab" aria-selected="false">Crosswind</button>
+    <button type="button" class="tab-btn" data-panel="tas"   role="tab" aria-selected="false">TAS/CAS</button>
+    <button type="button" class="tab-btn" data-panel="da"    role="tab" aria-selected="false">Density Alt</button>
+    <button type="button" class="tab-btn" data-panel="tsd"   role="tab" aria-selected="false">T-S-D</button>
+    <button type="button" class="tab-btn" data-panel="fuel"  role="tab" aria-selected="false">Fuel</button>
+    <button type="button" class="tab-btn" data-panel="dew"   role="tab" aria-selected="false">Dew/RH</button>
+    <button type="button" class="tab-btn" data-panel="nav"   role="tab" aria-selected="false">Reciprocal/VOR</button>
+    <button type="button" class="tab-btn" data-panel="conv"  role="tab" aria-selected="false">Converters</button>
+  </div>
+
+  <!-- Wind / Heading / GS / WCA -->
+  <section id="demo-panel-wind" data-key="panel-wind" class="panel active" role="tabpanel">
+    <div class="grid two">
+      <div class="card">
+        <h3>Course, Ground Speed & Wind Correction</h3>
+        <div class="form">
+          <label>True Course (°)<input type="number" id="demo-tc" data-key="tc" value="320" min="0" max="360" step="any"></label>
+          <label>True Air Speed (kt)<input type="number" id="demo-tas" data-key="tas" value="100" min="0" step="any"></label>
+          <label>True Wind Direction FROM (°)<input type="number" id="demo-windDir" data-key="windDir" value="90" min="0" max="360" step="any"></label>
+          <label>Wind Speed (kt)<input type="number" id="demo-windSpd" data-key="windSpd" value="23" min="0" step="any"></label>
+          <label>Variation (°) <small>(+E, −W)</small><input type="number" id="demo-variation" data-key="variation" value="0" step="any"></label>
+        </div>
+        <div class="results" aria-live="polite" aria-atomic="true">
+          <div><span>Wind Correction Angle</span><b><span id="demo-wca" data-key="wca">—</span>° <em id="demo-wcaSide" data-key="wcaSide">—</em></b></div>
+          <div><span>True Heading</span><b><span id="demo-th" data-key="th">—</span>°</b></div>
+          <div><span>Magnetic Heading</span><b><span id="demo-mh" data-key="mh">—</span>°</b></div>
+          <div><span>Ground Speed</span><b><span id="demo-gs" data-key="gs">—</span> kt</b></div>
+          <div><span>Head/Tailwind</span><b id="demo-ht" data-key="ht">—</b></div>
+          <div><span>Crosswind</span><b><span id="demo-cw" data-key="cw">—</span> kt <em id="demo-cwSide" data-key="cwSide">—</em></b></div>
+        </div>
+      </div>
+      <div class="card">
+        <canvas role="img" id="demo-windCanvas" data-key="windCanvas" width="560" height="560" aria-label="Wind triangle diagram">Wind triangle; numeric results are provided alongside.</canvas><div class="diagram-legend"><span style="color:#148577">Air vector</span><span style="color:#2563eb">Ground vector</span><span style="color:#c63e3e">Wind vector</span></div>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Wind Direction & Speed (Inverse)</h3>
+        <div class="form">
+          <label>True Heading (°)<input type="number" id="demo-inv_hdg" data-key="inv_hdg" value="330" step="any"></label>
+          <label>True Course (°)<input type="number" id="demo-inv_crs" data-key="inv_crs" value="320" step="any"></label>
+          <label>TAS (kt)<input type="number" id="demo-inv_tas" data-key="inv_tas" value="100" step="any"></label>
+          <label>GS (kt)<input type="number" id="demo-inv_gs" data-key="inv_gs" value="113" step="any"></label>
+        </div>
+        <div class="results" aria-live="polite" aria-atomic="true">
+          <div><span>Wind Direction FROM</span><b><span id="demo-inv_wd" data-key="inv_wd">—</span>°</b></div>
+          <div><span>Wind Speed</span><b><span id="demo-inv_ws" data-key="inv_ws">—</span> kt</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Flight Time for Distance & GS</h3>
+        <div class="form">
+          <label>Distance (NM)<input type="number" id="demo-ftd_dist" data-key="ftd_dist" value="" step="any"></label>
+          <label>Ground Speed (kt)<input type="number" id="demo-ftd_gs" data-key="ftd_gs" value="113" step="any"></label>
+        </div>
+        <div class="results" aria-live="polite" aria-atomic="true">
+          <div><span>Flight Time</span><b id="demo-ftd_out" data-key="ftd_out">—</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Crosswind -->
+  <section id="demo-panel-xwind" data-key="panel-xwind" class="panel" role="tabpanel">
+    <div class="card">
+      <h3>Crosswind Calculator</h3><p class="muted">Use the same reference for runway and wind directions: both true or both magnetic.</p>
+      <div class="form">
+        <label>Runway Heading (°)<input type="number" id="demo-rw_hd" data-key="rw_hd" value="330" step="any"></label>
+        <label>Wind Direction FROM (°)<input type="number" id="demo-xw_dir" data-key="xw_dir" value="90" step="any"></label>
+        <label>Wind Speed (kt)<input type="number" id="demo-xw_spd" data-key="xw_spd" value="23" step="any"></label>
+      </div>
+      <div class="results" aria-live="polite" aria-atomic="true">
+        <div><span>Crosswind</span><b><span id="demo-xw_cw" data-key="xw_cw">—</span> kt <em id="demo-xw_side" data-key="xw_side">—</em></b></div>
+        <div><span>Head/Tailwind</span><b id="demo-xw_ht" data-key="xw_ht">—</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAS / IAS -->
+  <section id="demo-panel-tas" data-key="panel-tas" class="panel" role="tabpanel">
+    <div class="grid two">
+      <div class="card">
+        <h3>True Airspeed (from CAS)</h3><p class="muted">Correct IAS for instrument and position error using your aircraft handbook to obtain CAS. Subsonic compressibility is included.</p>
+        <div class="form">
+          <label>Indicated Altitude (ft)<input type="number" id="demo-ia_alt" data-key="ia_alt" value="0" step="any"></label>
+          <label>Altimeter Setting (inHg)<input type="number" id="demo-alt_set" data-key="alt_set" value="29.92" step="any"></label>
+          <label>Outside Air Temp (°C)<input type="number" id="demo-oat" data-key="oat" value="0" step="any"></label>
+          <label>Calibrated Airspeed (kt)<input type="number" id="demo-ias" data-key="ias" value="100" step="any"></label>
+        </div>
+        <div class="results" aria-live="polite" aria-atomic="true">
+          <div><span>Pressure Altitude</span><b id="demo-pa_out" data-key="pa_out">—</b></div>
+          <div><span>ISA Temp</span><b id="demo-isa_t" data-key="isa_t">—</b></div>
+          <div><span>True Air Speed</span><b id="demo-tas_out" data-key="tas_out">—</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Calibrated Airspeed (from TAS)</h3>
+        <div class="form">
+          <label>Pressure Altitude (ft)<input type="number" id="demo-itas_pa" data-key="itas_pa" value="0" step="any"></label>
+          <label>Outside Air Temp (°C)<input type="number" id="demo-itas_oat" data-key="itas_oat" value="0" step="any"></label>
+          <label>True Air Speed (kt)<input type="number" id="demo-itas_tas" data-key="itas_tas" value="100" step="any"></label>
+        </div>
+        <div class="results" aria-live="polite" aria-atomic="true">
+          <div><span>Calibrated Airspeed</span><b id="demo-itas_ias" data-key="itas_ias">—</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Density Altitude -->
+  <section id="demo-panel-da" data-key="panel-da" class="panel" role="tabpanel">
+    <div class="card">
+      <h3>Density Altitude</h3><p class="muted">Dry-air ISA model. Pressure altitude uses the approximate 1,000 ft per inHg correction.</p>
+      <div class="form">
+        <label>Field Elevation (ft)<input type="number" id="demo-da_field_elev" data-key="da_field_elev" value="0" step="any"></label>
+        <label>Altimeter Setting (inHg)<input type="number" id="demo-da_altset" data-key="da_altset" value="29.92" step="any"></label>
+        <label>Outside Air Temp (°C)<input type="number" id="demo-da_oat" data-key="da_oat" value="15" step="any"></label>
+      </div>
+      <div class="results" aria-live="polite" aria-atomic="true">
+        <div><span>Pressure Altitude</span><b id="demo-da_pa" data-key="da_pa">—</b></div>
+        <div><span>ISA Temp</span><b id="demo-da_isat" data-key="da_isat">—</b></div>
+        <div><span>Density Altitude</span><b id="demo-da_out" data-key="da_out">—</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Time / Speed / Distance -->
+  <section id="demo-panel-tsd" data-key="panel-tsd" class="panel" role="tabpanel">
+    <div class="card">
+      <h3>Time – Speed – Distance</h3>
+      <p>Choose what to calculate, then enter the other two values.</p>
+      <div class="form"><label>Calculate<select id="demo-tsd_solve" data-key="tsd_solve"><option value="time">Time</option><option value="dist">Distance</option><option value="speed">Speed</option></select></label></div>
+      <div class="form three">
+        <label>Distance (NM)<input type="number" id="demo-tsd_dist" data-key="tsd_dist" placeholder="e.g., 75" step="any"></label>
+        <label>Speed (kt)<input type="number" id="demo-tsd_speed" data-key="tsd_speed" placeholder="e.g., 113" step="any"></label>
+        <label>Time (min)<input type="number" id="demo-tsd_time" data-key="tsd_time" placeholder="e.g., 40" step="any"></label>
+      </div>
+      <div class="results" aria-live="polite" aria-atomic="true">
+        <div><span>Result</span><b id="demo-tsd_out" data-key="tsd_out">—</b></div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button type="button" id="demo-tsd_reset" data-key="tsd_reset" class="btn">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fuel -->
+  <section id="demo-panel-fuel" data-key="panel-fuel" class="panel" role="tabpanel">
+    <div class="card">
+      <h3>Fuel Consumption</h3><p class="muted">Trip consumption only; add taxi, contingency and required reserves separately.</p>
+      <div class="form">
+        <label>Fuel Flow (US gal/hr)<input type="number" id="demo-ff" data-key="ff" value="8" step="any"></label>
+        <label>Flight Time (min)<input type="number" id="demo-ft" data-key="ft" value="0" step="any"></label>
+      </div>
+      <div class="results" aria-live="polite" aria-atomic="true">
+        <div><span>Trip Fuel</span><b><span id="demo-fu" data-key="fu">—</span> US gal</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dewpoint & RH -->
+  <section id="demo-panel-dew" data-key="panel-dew" class="panel" role="tabpanel">
+    <div class="grid two">
+      <div class="card">
+        <h3>Dewpoint</h3>
+        <div class="form">
+          <label>Air Temp<input type="number" id="demo-dew_t" data-key="dew_t" value="20" step="any"></label>
+          <label>Units
+            <select id="demo-dew_t_unit" data-key="dew_t_unit"><option value="C">°C</option><option value="F">°F</option></select>
+          </label>
+          <label>Relative Humidity (%)<input type="number" id="demo-dew_rh" data-key="dew_rh" value="50" min="0" max="100" step="any"></label>
+        </div>
+        <div class="results" aria-live="polite" aria-atomic="true"><div><span>Dewpoint</span><b id="demo-dew_out" data-key="dew_out">—</b></div></div>
+        <small>* Magnus approximation over water (−45 to +60 °C)</small>
+      </div>
+      <div class="card">
+        <h3>Relative Humidity</h3>
+        <div class="form">
+          <label>Air Temp<input type="number" id="demo-rh_t" data-key="rh_t" value="20" step="any"></label>
+          <label>Units
+            <select id="demo-rh_t_unit" data-key="rh_t_unit"><option value="C">°C</option><option value="F">°F</option></select>
+          </label>
+          <label>Dewpoint (°C)<input type="number" id="demo-rh_td" data-key="rh_td" value="10" step="any"></label>
+        </div>
+        <div class="results" aria-live="polite" aria-atomic="true"><div><span>Relative Humidity</span><b><span id="demo-rh_out" data-key="rh_out">—</span>%</b></div></div>
+        <small>* Magnus approximation over water (−45 to +60 °C)</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reciprocal & VOR -->
+  <section id="demo-panel-nav" data-key="panel-nav" class="panel" role="tabpanel">
+    <div class="grid two">
+      <div class="card">
+        <h3>Reciprocal Heading</h3>
+        <div class="form">
+          <label>Heading (°)<input type="number" id="demo-rec_in" data-key="rec_in" value="330" step="any"></label>
+        </div>
+        <div class="results" aria-live="polite" aria-atomic="true"><div><span>Reciprocal</span><b id="demo-rec_out" data-key="rec_out">—</b></div></div>
+      </div>
+      <div class="card">
+        <h3>VOR Radial &amp; Bearing</h3>
+        <div class="form">
+          <label>Radial (FROM VOR, °)<input type="number" id="demo-vor_rad" data-key="vor_rad" value="090" step="any"></label>
+          <label>Bearing (TO VOR, °)<input type="number" id="demo-vor_brg" data-key="vor_brg" value="270" step="any"></label>
+        </div>
+        <p class="muted">Radial ↔ Bearing: 180° apart.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Converters -->
+  <section id="demo-panel-conv" data-key="panel-conv" class="panel" role="tabpanel">
+    <div class="grid two">
+      <div class="card">
+        <h3>Temperature</h3>
+        <div class="form three">
+          <label>°F<input type="number" id="demo-tmp_f" data-key="tmp_f" placeholder="Fahrenheit" step="any"></label>
+          <label>°C<input type="number" id="demo-tmp_c" data-key="tmp_c" placeholder="Celsius" step="any"></label>
+          <label>K<input type="number" id="demo-tmp_k" data-key="tmp_k" placeholder="Kelvin" step="any"></label>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Distance</h3>
+        <div class="form three">
+          <label>NM<input type="number" id="demo-dst_nm" data-key="dst_nm" step="any"></label>
+          <label>SM<input type="number" id="demo-dst_sm" data-key="dst_sm" step="any"></label>
+          <label>km<input type="number" id="demo-dst_km" data-key="dst_km" step="any"></label>
+          <label>m<input type="number" id="demo-dst_m" data-key="dst_m" step="any"></label>
+          <label>ft<input type="number" id="demo-dst_ft" data-key="dst_ft" step="any"></label>
+          <label>yd<input type="number" id="demo-dst_yd" data-key="dst_yd" step="any"></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Speed / Mach (ISA sea level)</h3><p class="muted">Mach conversion assumes 15 °C. Local Mach varies with temperature.</p>
+        <div class="form three">
+          <label>kt<input type="number" id="demo-spd_kt" data-key="spd_kt" step="any"></label>
+          <label>mph<input type="number" id="demo-spd_mph" data-key="spd_mph" step="any"></label>
+          <label>kph<input type="number" id="demo-spd_kph" data-key="spd_kph" step="any"></label>
+          <label>fpm<input type="number" id="demo-spd_fpm" data-key="spd_fpm" step="any"></label>
+          <label>m/s<input type="number" id="demo-spd_ms" data-key="spd_ms" step="any"></label>
+          <label>Mach<input type="number" id="demo-spd_mach" data-key="spd_mach" step="any"></label>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Pressure</h3>
+        <div class="form three">
+          <label>inHg<input type="number" id="demo-prs_inhg" data-key="prs_inhg" step="any"></label>
+          <label>mmHg<input type="number" id="demo-prs_mmhg" data-key="prs_mmhg" step="any"></label>
+          <label>hPa<input type="number" id="demo-prs_hpa" data-key="prs_hpa" step="any"></label>
+          <label>Pa<input type="number" id="demo-prs_pa" data-key="prs_pa" step="any"></label>
+          <label>atm<input type="number" id="demo-prs_atm" data-key="prs_atm" step="any"></label>
+          <label>psi<input type="number" id="demo-prs_psi" data-key="prs_psi" step="any"></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Area</h3>
+        <div class="form three">
+          <label>mi²<input type="number" id="demo-ar_mi2" data-key="ar_mi2" step="any"></label>
+          <label>ft²<input type="number" id="demo-ar_ft2" data-key="ar_ft2" step="any"></label>
+          <label>in²<input type="number" id="demo-ar_in2" data-key="ar_in2" step="any"></label>
+          <label>km²<input type="number" id="demo-ar_km2" data-key="ar_km2" step="any"></label>
+          <label>m²<input type="number" id="demo-ar_m2" data-key="ar_m2" step="any"></label>
+          <label>acres<input type="number" id="demo-ar_ac" data-key="ar_ac" step="any"></label>
+          <label>hectares<input type="number" id="demo-ar_ha" data-key="ar_ha" step="any"></label>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Weight &amp; Mass</h3>
+        <div class="form three">
+          <label>kg<input type="number" id="demo-mass_kg" data-key="mass_kg" step="any"></label>
+          <label>g<input type="number" id="demo-mass_g" data-key="mass_g" step="any"></label>
+          <label>lb<input type="number" id="demo-mass_lb" data-key="mass_lb" step="any"></label>
+          <label>oz<input type="number" id="demo-mass_oz" data-key="mass_oz" step="any"></label>
+          <label>t<input type="number" id="demo-mass_t" data-key="mass_t" step="any"></label>
+          <label>st (UK)<input type="number" id="demo-mass_st" data-key="mass_st" step="any"></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Volume / Fuel</h3>
+        <div class="form">
+          <label>Fuel type*
+            <select id="demo-vol_fueltype" data-key="vol_fueltype">
+              <option value="custom">Custom (Other)</option>
+              <option value="avgas">Avgas (6 lb/US gal)</option>
+              <option value="jeta1">Jet A-1 (0.804 kg/L @15 °C)</option>
+              <option value="jeta">Jet A (0.800 kg/L)</option>
+              <option value="jetb">Jet B (0.760 kg/L)</option>
+            </select>
+          </label>
+          <p class="note">*Presets use typical densities; adjust for temperature/batch as needed.</p>
+        </div>
+
+        <div class="form three">
+          <label>Liters<input type="number" id="demo-vol_L" data-key="vol_L" step="any"></label>
+          <label>US gal<input type="number" id="demo-vol_galUS" data-key="vol_galUS" step="any"></label>
+          <label>Imp gal<input type="number" id="demo-vol_galImp" data-key="vol_galImp" step="any"></label>
+          <label>lb<input type="number" id="demo-vol_lb" data-key="vol_lb" step="any"></label>
+          <label>kg<input type="number" id="demo-vol_kg" data-key="vol_kg" step="any"></label>
+          <label>t<input type="number" id="demo-vol_t" data-key="vol_t" step="any"></label>
+        </div>
+        <div class="form">
+          <label>Fuel Density
+            <select id="demo-vol_rho_unit" data-key="vol_rho_unit" aria-label="Fuel density unit">
+              <option value="kgL">kg/L</option>
+              <option value="lbgal">lb/US gal</option>
+            </select>
+            <input type="number" id="demo-vol_rho" data-key="vol_rho" aria-label="Fuel density value" value="0.72" step="any">
+          </label>
+          <p class="muted small">Avgas ≈ 0.72 kg/L (6 lb/US gal)</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Time Breakdown</h3><p class="muted">Hours + minutes + seconds = total seconds.</p>
+        <div class="form three">
+          <label>Hours<input type="number" id="demo-tm_h" data-key="tm_h" step="any"></label>
+          <label>Minutes<input type="number" id="demo-tm_m" data-key="tm_m" step="any"></label>
+          <label>Seconds<input type="number" id="demo-tm_s" data-key="tm_s" step="any"></label>
+        </div>
+        <div class="form">
+          <label>Total Seconds<input type="number" id="demo-tm_tot" data-key="tm_tot" step="any"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">Planning aid. Verify results against your aircraft POH/AFM and an independent flight computer before operational use.</p>
+  <!-- GPS was not present in the supplied plugin. -->
+  
+</div>
+<script>/* Pure calculations; SI atmosphere constants, feet and knots at public boundaries. */
+(function (scope) {
+  'use strict';
+  const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+  const norm = d => ((d % 360) + 360) % 360;
+  function range(v, lo, hi, name) {
+    if (!Number.isFinite(v) || v < lo || v > hi) throw new Error(name + ' must be between ' + lo + ' and ' + hi + '.');
+    return v;
+  }
+  function positive(v, name) { if (!Number.isFinite(v) || v <= 0) throw new Error(name + ' must be greater than zero.'); return v; }
+  function pressureAltitude(alt, setting) { range(alt, -2000, 60000, 'Altitude'); range(setting, 25, 35, 'Altimeter setting'); return alt + (29.92-setting)*1000; }
+  function atmosphere(pa, oat) {
+    range(pa, -2000, 60000, 'Pressure altitude (ft)'); range(oat, -100, 60, 'Outside air temperature (°C)');
+    const h=pa*0.3048, t0=288.15, lapse=0.0065, exponent=9.80665/(287.05287*lapse);
+    const tISA=h<=11000 ? t0-lapse*h : 216.65;
+    const delta=h<=11000 ? Math.pow(tISA/t0,exponent) : Math.pow(216.65/t0,exponent)*Math.exp(-9.80665*(h-11000)/(287.05287*216.65));
+    return {isa:tISA-273.15, delta, sigma:delta*t0/(oat+273.15)};
+  }
+  function tas(cas,pa,oat) {
+    range(cas,0,600,'CAS (kt)'); const {delta}=atmosphere(pa,oat), a0=Math.sqrt(1.4*287.05287*288.15)/ (1852/3600);
+    const qc=Math.pow(1+0.2*(cas/a0)**2,3.5)-1;
+    const mach=Math.sqrt(5*(Math.pow(1+qc/delta,2/7)-1));
+    if (mach>=1) throw new Error('This airspeed model supports subsonic flight only.');
+    return mach*a0*Math.sqrt((oat+273.15)/288.15);
+  }
+  function cas(tasValue,pa,oat) {
+    range(tasValue,0,1000,'TAS (kt)'); const {delta}=atmosphere(pa,oat), a0=Math.sqrt(1.4*287.05287*288.15)/(1852/3600);
+    const mach=tasValue/(a0*Math.sqrt((oat+273.15)/288.15));
+    if (mach>=1) throw new Error('This airspeed model supports subsonic flight only.');
+    const qc=delta*(Math.pow(1+0.2*mach*mach,3.5)-1);
+    return a0*Math.sqrt(5*(Math.pow(qc+1,2/7)-1));
+  }
+  function densityAltitude(pa,oat) {
+    const {sigma}=atmosphere(pa,oat), n=9.80665/(287.05287*0.0065)-1;
+    const boundary=Math.pow(216.65/288.15,n);
+    return (sigma>=boundary ? (288.15/0.0065)*(1-Math.pow(sigma,1/n)) : 11000-Math.log(sigma/boundary)*287.05287*216.65/9.80665)/0.3048;
+  }
+  function components(hdg,wd,ws) { range(hdg,0,360,'Heading/course'); range(wd,0,360,'Wind direction'); range(ws,0,1000,'Wind speed'); const b=rad(wd-hdg); return {x:ws*Math.sin(b), h:ws*Math.cos(b)}; }
+  function wind(TC,TAS,WD,WS,VAR) {
+    positive(TAS,'TAS'); range(TAS,0,2000,'TAS'); range(VAR,-180,180,'Variation'); const {x,h}=components(TC,WD,WS);
+    if (Math.abs(x)>TAS) throw new Error('Course cannot be maintained: crosswind exceeds TAS.');
+    const wca=deg(Math.asin(x/TAS)), TH=norm(TC+wca), GS=Math.sqrt(Math.max(0,TAS*TAS-x*x))-h;
+    if (GS<=1e-9) throw new Error('Course cannot be maintained with positive ground speed.');
+    const ax=TAS*Math.sin(rad(TH)), ay=-TAS*Math.cos(rad(TH)), wDirTo=norm(WD+180), wx=WS*Math.sin(rad(wDirTo)), wy=-WS*Math.cos(rad(wDirTo));
+    return {TC,TAS,WD,WS,VAR,x,h,wca,TH,MH:norm(TH-VAR),GS,GDir:TC,aDir:TH,wDirTo,ax,ay,wx,wy,gx:ax+wx,gy:ay+wy};
+  }
+  function inverse(hdg,crs,tasValue,gs) {
+    range(hdg,0,360,'Heading'); range(crs,0,360,'Course'); positive(tasValue,'TAS'); range(gs,0,2000,'Ground speed');
+    const x=gs*Math.sin(rad(crs))-tasValue*Math.sin(rad(hdg)), y=gs*Math.cos(rad(crs))-tasValue*Math.cos(rad(hdg));
+    const speed=Math.hypot(x,y); return {speed,direction:speed<1e-9 ? null : norm(deg(Math.atan2(-x,-y)))};
+  }
+  function tsd(target,d,s,t) { if(target==='dist'){range(s,0,2000,'Speed');range(t,0,1e7,'Time');return s*t/60;} if(target==='speed'){range(d,0,1e7,'Distance');positive(t,'Time');return d*60/t;} range(d,0,1e7,'Distance');positive(s,'Speed');return d*60/s; }
+  function dew(t,rh) { range(t,-45,60,'Air temperature (°C)');positive(rh,'Humidity');range(rh,0,100,'Humidity'); const g=Math.log(rh/100)+17.62*t/(243.12+t);return range(243.12*g/(17.62-g),-45,60,'Calculated dewpoint (°C)'); }
+  function humidity(t,td) { range(t,-45,60,'Air temperature (°C)');range(td,-45,t,'Dewpoint (°C)');return 100*Math.exp(17.62*td/(243.12+td)-17.62*t/(243.12+t)); }
+  const api={rad,deg,norm,range,positive,pressureAltitude,atmosphere,tas,cas,densityAltitude,components,wind,inverse,tsd,dew,humidity};
+  if(typeof module==='object' && module.exports) module.exports=api; else scope.E6BMath=api;
+})(typeof window==='object'?window:globalThis);
+</script><script>(function () {
+  'use strict';
+  const M=window.E6BMath;
+  function initialize(root) {
+    if(root.dataset.initialized) return;
+    root.dataset.initialized='true';
+    const $=key=>root.querySelector('[data-key="'+key.replace(/^#/,'')+'"]');
+    const fmt=(v,p=2)=>Number.isFinite(v)?String(Number(v.toFixed(p))):'—';
+    const bearing=v=>String(Math.round(M.norm(v))%360).padStart(3,'0');
+    const n=key=>{const el=$(key); if(el.value.trim()==='' || !Number.isFinite(el.valueAsNumber)) throw new Error('Enter all required values.'); return el.valueAsNumber;};
+    const put=(key,value)=>{$(key).textContent=value;};
+    const set=(key,value)=>{$(key).value=Number.isFinite(value)?String(Number(value.toPrecision(12))):'';};
+    const side=x=>Math.abs(x)<1e-9?'':x>0?'R':'L';
+    const head=h=>fmt(Math.abs(h),1)+(h>=0?' kt Head':' kt Tail');
+    function message(card) { let el=card.querySelector('.status'); if(!el){el=document.createElement('p');el.className='status';el.setAttribute('role','status');card.append(el);}return el; }
+    function bind(keys, outputs, calculate, extra) {
+      const card=$(keys[0]).closest('.card'), status=message(card);
+      const update=()=>{
+        keys.forEach(k=>$(k).removeAttribute('aria-invalid'));
+        try {calculate();status.textContent='';}
+        catch(error){outputs.forEach(k=>put(k,'—'));status.textContent=error.message; if(extra)extra();
+          const incomplete=error.message==='Enter all required values.';status.classList.toggle('is-hint',incomplete);
+          keys.forEach(k=>{if($(k).type==='number' && $(k).value && !$(k).validity.valid)$(k).setAttribute('aria-invalid','true');});}
+      };
+      keys.forEach(k=>$(k).addEventListener('input',update));update();return update;
+    }
+    const tabs=Array.from(root.querySelectorAll('.tab-btn'));
+    const flat=root.classList.contains('e6b-flat');
+    function activate(index,focus=false){tabs.forEach((tab,i)=>{const active=i===index;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;const panel=$('panel-'+tab.dataset.panel);panel.hidden=!flat&&!active;panel.classList.toggle('active',active);});if(focus)tabs[index].focus();resizeCanvas();}
+    tabs.forEach((tab,i)=>{
+      tab.id=root.id+'-tab-'+tab.dataset.panel; const panel=$('panel-'+tab.dataset.panel);
+      tab.setAttribute('aria-controls',panel.id);panel.setAttribute('aria-labelledby',tab.id);panel.tabIndex=0;
+      if(flat){panel.removeAttribute('role');panel.removeAttribute('aria-labelledby');panel.tabIndex=-1;}
+      tab.addEventListener('click',()=>activate(i));
+      tab.addEventListener('keydown',e=>{let j=i;if(e.key==='ArrowRight')j=(i+1)%tabs.length;else if(e.key==='ArrowLeft')j=(i+tabs.length-1)%tabs.length;else if(e.key==='Home')j=0;else if(e.key==='End')j=tabs.length-1;else return;e.preventDefault();activate(j,true);});
+    });
+    const cvs=$('windCanvas'),ctx=cvs.getContext('2d');let windData=null;
+    const toRad=M.rad,toDeg=M.deg;
+    function resizeCanvas(){if(!ctx||!cvs.getBoundingClientRect().width)return;const side=Math.max(280,cvs.getBoundingClientRect().width),dpr=window.devicePixelRatio||1;cvs.width=Math.round(side*dpr);cvs.height=Math.round(side*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);drawWind();}
+    // ===== Drawing helpers =====
+    function drawArrow(cx, cy, len, angleDeg, color, width=3){
+      const a = toRad(angleDeg);
+      const x2 = cx + len*Math.sin(a);
+      const y2 = cy - len*Math.cos(a);
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x2, y2);
+      ctx.lineWidth = width; ctx.strokeStyle = color; ctx.lineCap='round'; ctx.stroke();
+      const ah = 12, aw = 7; const backX = x2 - ah*Math.sin(a); const backY = y2 + ah*Math.cos(a);
+      ctx.beginPath(); ctx.moveTo(x2, y2);
+      ctx.lineTo(backX + aw*Math.cos(a), backY + aw*Math.sin(a));
+      ctx.lineTo(backX - aw*Math.cos(a), backY - aw*Math.sin(a));
+      ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+    }
+    function ring(cx, cy, r, w, color){ ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.lineWidth = w; ctx.strokeStyle = color; ctx.stroke(); }
+    function text(txt, x, y, opts={}){
+      const {align='center', baseline='middle', size=12, color='#0f172a', weight='600'} = opts;
+      ctx.save(); ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = baseline; ctx.font = `${weight} ${size}px system-ui, sans-serif`; ctx.fillText(txt, x, y); ctx.restore();
+    }
+    function drawCompass(cx, cy, R){
+      ctx.save(); const grad = ctx.createRadialGradient(cx, cy, R*0.6, cx, cy, R); grad.addColorStop(0, '#ffffff'); grad.addColorStop(1, '#e2e8f0'); ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.fill(); ctx.restore();
+      ring(cx, cy, R-2, 2, '#cbd5e1'); ring(cx, cy, R*0.82, 1, '#e2e8f0');
+      for (let d=0; d<360; d++){
+        const big30 = d%30===0, big10 = d%10===0, mid5 = d%5===0; let len=0; let col='#e2e8f0';
+        if (big30){ len=10; col='#94a3b8'; } else if (big10){ len=7; col='#cbd5e1'; } else if (mid5){ len=5; col='#e5e7eb'; } else { len=3; col='#f1f5f9'; }
+        const x1 = cx + (R-len)*Math.sin(toRad(d)); const y1 = cy - (R-len)*Math.cos(toRad(d)); const x2 = cx + (R)*Math.sin(toRad(d)); const y2 = cy - (R)*Math.cos(toRad(d));
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.strokeStyle = col; ctx.lineWidth = (big30?1.6:(big10?1.2:1)); ctx.stroke();
+      }
+      [['0','N'],['90','E'],['180','S'],['270','W']].forEach(([deg, lab])=>{ const x = cx + (R-20)*Math.sin(toRad(+deg)); const y = cy - (R-20)*Math.cos(toRad(+deg)); text(lab, x, y, {size:14, color:'#334155', weight:'700'}); });
+      for (let d=0; d<360; d+=30){ if(d%90===0) continue; const x = cx + (R-36)*Math.sin(toRad(d)); const y = cy - (R-36)*Math.cos(toRad(d)); text(String(d).padStart(3,'0'), x, y, {size:11, color:'#475569', weight:'700'}); }
+    }
+    function bug(cx, cy, R, angle, color, label){
+      const a = toRad(angle); ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 6; ctx.lineCap='round'; ctx.beginPath(); ctx.arc(cx, cy, R-3, a-Math.PI/2-0.06, a-Math.PI/2+0.06); ctx.stroke();
+      const px = cx + (R-12)*Math.sin(a); const py = cy - (R-12)*Math.cos(a);
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + 8*Math.cos(a), py + 8*Math.sin(a)); ctx.lineTo(px - 8*Math.cos(a), py - 8*Math.sin(a));
+      ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+      ctx.restore();
+    }
+    function drawWind(){
+      if (!cvs || !ctx) return; const data = windData; const rect = cvs.getBoundingClientRect(); const W = Math.max(280, rect.width); const H = W; ctx.clearRect(0,0,W,H); if (!data) return;
+      const cx = W/2, cy = H/2; const R = Math.min(W,H)/2 - 22; drawCompass(cx, cy, R);
+      bug(cx, cy, R, data.TC, '#2563eb', 'CRS'); bug(cx, cy, R, data.TH, '#14b8a6', 'HDG');
+      const k = (R*0.70) / Math.max(1, data.TAS, data.WS, data.GS); const ax = data.ax * k, ay = data.ay * k; const wx = data.wx * k, wy = data.wy * k; const gx = (data.gx) * k, gy = (data.gy) * k;
+      drawArrow(cx, cy, Math.hypot(ax,ay), data.aDir, '#14b8a6', 4);
+      const aTipX = cx + ax, aTipY = cy + ay; const wLen = Math.hypot(wx,wy); const wAng = data.wDirTo;
+      ctx.save(); ctx.setLineDash([6,6]); ctx.strokeStyle = 'rgba(239,68,68,.45)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx+wx, cy+wy); ctx.stroke(); ctx.restore();
+      drawArrow(aTipX, aTipY, wLen, wAng, '#ef4444', 3);
+      drawArrow(cx, cy, Math.hypot(gx,gy), data.GDir, '#2563eb', 5);
+      ctx.save(); ctx.strokeStyle = 'rgba(2,6,23,.12)'; ctx.setLineDash([4,6]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(aTipX, aTipY); ctx.lineTo(cx+gx, cy+gy); ctx.closePath(); ctx.stroke(); ctx.restore();
+
+    }
+
+    bind(['tc','tas','windDir','windSpd','variation'],['wca','wcaSide','th','mh','gs','ht','cw','cwSide'],()=>{
+      windData=M.wind(n('tc'),n('tas'),n('windDir'),n('windSpd'),n('variation'));
+      const d=windData;put('wca',fmt(Math.abs(d.wca),1));put('wcaSide',side(d.x));put('th',bearing(d.TH));put('mh',bearing(d.MH));put('gs',fmt(d.GS,1));put('ht',head(d.h));put('cw',fmt(Math.abs(d.x),1));put('cwSide',side(d.x));drawWind();
+    },()=>{windData=null;drawWind();});
+    bind(['inv_hdg','inv_crs','inv_tas','inv_gs'],['inv_wd','inv_ws'],()=>{const w=M.inverse(n('inv_hdg'),n('inv_crs'),n('inv_tas'),n('inv_gs'));put('inv_wd',w.direction===null?'Calm':bearing(w.direction));put('inv_ws',fmt(w.speed,1));});
+    bind(['ia_alt','alt_set','oat','ias'],['pa_out','isa_t','tas_out'],()=>{const pa=M.pressureAltitude(n('ia_alt'),n('alt_set')),oat=n('oat'),tas=M.tas(n('ias'),pa,oat);put('pa_out',fmt(pa,0)+' ft');put('isa_t',fmt(M.atmosphere(pa,oat).isa,1)+' °C');put('tas_out',fmt(tas,1)+' kt');});
+    bind(['itas_pa','itas_oat','itas_tas'],['itas_ias'],()=>put('itas_ias',fmt(M.cas(n('itas_tas'),n('itas_pa'),n('itas_oat')),1)+' kt'));
+    bind(['da_field_elev','da_altset','da_oat'],['da_pa','da_isat','da_out'],()=>{const pa=M.pressureAltitude(n('da_field_elev'),n('da_altset')),oat=n('da_oat'),da=M.densityAltitude(pa,oat);put('da_pa',fmt(pa,0)+' ft');put('da_isat',fmt(M.atmosphere(pa,oat).isa,1)+' °C');put('da_out',fmt(da,0)+' ft');});
+    bind(['rw_hd','xw_dir','xw_spd'],['xw_cw','xw_side','xw_ht'],()=>{const {x,h}=M.components(n('rw_hd'),n('xw_dir'),n('xw_spd'));put('xw_cw',fmt(Math.abs(x),1));put('xw_side',side(x));put('xw_ht',head(h));});
+    const timeText=min=>{const s=Math.round(min*60);return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(v=>String(v).padStart(2,'0')).join(':');};
+    bind(['ftd_dist','ftd_gs'],['ftd_out'],()=>put('ftd_out',timeText(M.tsd('time',n('ftd_dist'),n('ftd_gs'),0))));
+    const tsdKeys=['tsd_dist','tsd_speed','tsd_time'];
+    const updateTSD=bind(['tsd_solve',...tsdKeys],['tsd_out'],()=>{
+      const target=$('tsd_solve').value;tsdKeys.forEach(k=>{$(k).readOnly=k==='tsd_'+target;});
+      const d=target==='dist'?0:n('tsd_dist'),s=target==='speed'?0:n('tsd_speed'),t=target==='time'?0:n('tsd_time');
+      const value=M.tsd(target,d,s,t);set('tsd_'+target,value);put('tsd_out',fmt(value,2)+' '+{dist:'NM',speed:'kt',time:'min'}[target]);
+    },()=>{$('tsd_'+$('tsd_solve').value).value='';});
+    $('tsd_reset').addEventListener('click',()=>{tsdKeys.forEach(k=>$(k).value='');updateTSD();});
+    bind(['ff','ft'],['fu'],()=>{const flow=M.range(n('ff'),0,1e6,'Fuel flow'),time=M.range(n('ft'),0,1e7,'Flight time');put('fu',fmt(flow*time/60));});
+    const temp=(key,unit)=>$(unit).value==='F'?(n(key)-32)*5/9:n(key);
+    bind(['dew_t','dew_t_unit','dew_rh'],['dew_out'],()=>put('dew_out',fmt(M.dew(temp('dew_t','dew_t_unit'),n('dew_rh')))+' °C'));
+    bind(['rh_t','rh_t_unit','rh_td'],['rh_out'],()=>put('rh_out',fmt(M.humidity(temp('rh_t','rh_t_unit'),n('rh_td')),1)));
+    bind(['rec_in'],['rec_out'],()=>put('rec_out',bearing(M.range(n('rec_in'),0,360,'Heading')+180)+'°'));
+    ['vor_rad','vor_brg'].forEach((key,i)=>$(key).addEventListener('input',()=>{try{set(['vor_brg','vor_rad'][i],M.norm(M.range(n(key),0,360,'Bearing')+180));message($(key).closest('.card')).textContent='';}catch(e){$(['vor_brg','vor_rad'][i]).value='';message($(key).closest('.card')).textContent=e.message;}}));
+    // Converters preserve the edited field and never round or replace it on blur.
+    function converter(factors, toBase, fromBase, validate) {
+      const keys=Object.keys(factors),status=message($(keys[0]).closest('.card'));
+      keys.forEach(key=>$(key).addEventListener('input',()=>{
+        try {const value=n(key),base=toBase?toBase(key,value):value*factors[key];if(validate)validate(base);else M.range(base,0,1e20,'Value');
+          keys.filter(k=>k!==key).forEach(k=>set(k,fromBase?fromBase(k,base):base/factors[k]));status.textContent='';
+        }catch(e){keys.filter(k=>k!==key).forEach(k=>$(k).value='');status.textContent=e.message;}
+      }));
+    }
+    converter({tmp_c:1,tmp_f:1,tmp_k:1},(k,v)=>k==='tmp_f'?(v-32)*5/9:k==='tmp_k'?v-273.15:v,(k,c)=>k==='tmp_f'?c*9/5+32:k==='tmp_k'?c+273.15:c,c=>M.range(c,-273.15,1e8,'Temperature (°C)'));
+    converter({dst_nm:1852,dst_sm:1609.344,dst_km:1000,dst_m:1,dst_ft:0.3048,dst_yd:0.9144});
+    converter({spd_kt:1852/3600,spd_mph:1609.344/3600,spd_kph:1/3.6,spd_fpm:0.3048/60,spd_ms:1,spd_mach:Math.sqrt(1.4*287.05287*288.15)});
+    converter({prs_inhg:3386.389,prs_mmhg:133.322387415,prs_hpa:100,prs_pa:1,prs_atm:101325,prs_psi:6894.757293168});
+    converter({ar_mi2:2589988.110336,ar_ft2:0.09290304,ar_in2:0.00064516,ar_km2:1e6,ar_m2:1,ar_ac:4046.8564224,ar_ha:10000});
+    converter({mass_kg:1,mass_g:0.001,mass_lb:0.45359237,mass_oz:0.028349523125,mass_t:1000,mass_st:6.35029318});
+    const volKeys=['vol_L','vol_galUS','vol_galImp','vol_lb','vol_kg','vol_t'];let volSource=null,prevUnit=$('vol_rho_unit').value;
+    const volStatus=message($('vol_L').closest('.card'));
+    function syncVolume(){try{const rho=M.positive(n('vol_rho'),'Fuel density')*($('vol_rho_unit').value==='kgL'?1:0.45359237/3.785411784);
+      if(!volSource){volStatus.textContent='';return;}const factors={vol_L:1,vol_galUS:3.785411784,vol_galImp:4.54609,vol_lb:0.45359237/rho,vol_kg:1/rho,vol_t:1000/rho};
+      const liters=M.range(n(volSource),0,1e15,'Fuel quantity')*factors[volSource];volKeys.filter(k=>k!==volSource).forEach(k=>set(k,liters/factors[k]));volStatus.textContent='';
+    }catch(e){volKeys.filter(k=>k!==volSource).forEach(k=>$(k).value='');volStatus.textContent=e.message;}}
+    volKeys.forEach(k=>$(k).addEventListener('input',()=>{volSource=k;syncVolume();}));
+    $('vol_rho').addEventListener('input',()=>{$('vol_fueltype').value='custom';syncVolume();});
+    $('vol_rho_unit').addEventListener('change',()=>{try{const value=n('vol_rho');set('vol_rho',prevUnit==='kgL'?value*3.785411784/0.45359237:value*0.45359237/3.785411784);}catch(e){/* preserve empty density */}prevUnit=$('vol_rho_unit').value;syncVolume();});
+    $('vol_fueltype').addEventListener('change',()=>{const rho={avgas:6*0.45359237/3.785411784,jeta1:0.804,jeta:0.800,jetb:0.760}[$('vol_fueltype').value];if(rho!==undefined)set('vol_rho',$('vol_rho_unit').value==='kgL'?rho:rho*3.785411784/0.45359237);syncVolume();});
+    const timeKeys=['tm_h','tm_m','tm_s'],timeStatus=message($('tm_h').closest('.card'));
+    timeKeys.forEach(key=>$(key).addEventListener('input',()=>{try{if(timeKeys.every(k=>$(k).value==='')){$('tm_tot').value='';timeStatus.textContent='';return;}const values=timeKeys.map(k=>$(k).value===''?0:M.range(n(k),0,1e10,'Time'));set('tm_tot',values[0]*3600+values[1]*60+values[2]);timeStatus.textContent='';}catch(e){$('tm_tot').value='';timeStatus.textContent=e.message;}}));
+    $('tm_tot').addEventListener('input',()=>{try{const total=M.range(n('tm_tot'),0,1e12,'Total seconds');set('tm_h',Math.floor(total/3600));set('tm_m',Math.floor(total%3600/60));set('tm_s',total%60);timeStatus.textContent='';}catch(e){timeKeys.forEach(k=>$(k).value='');timeStatus.textContent=e.message;}});
+    activate(0);
+    if(window.ResizeObserver){const observer=new ResizeObserver(resizeCanvas);observer.observe(cvs);const cleanup=new MutationObserver(()=>{if(!root.isConnected){observer.disconnect();cleanup.disconnect();}});cleanup.observe(document.body,{childList:true,subtree:true});}
+    else window.addEventListener('resize',resizeCanvas);
+  }
+  function scan(){document.querySelectorAll('[data-e6b-root]').forEach(initialize);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
+  new MutationObserver(records=>{if(records.some(r=>Array.from(r.addedNodes).some(n=>n.nodeType===1&&(n.matches('[data-e6b-root]')||n.querySelector('[data-e6b-root]')))))scan();}).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script></body></html>
