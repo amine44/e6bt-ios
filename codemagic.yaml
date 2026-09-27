@@ -1,4 +1,39 @@
 workflows:
+  e6bt-ios-simulator:
+    name: E6BT iOS Simulator - no Apple signing
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      node: 22
+      xcode: latest
+    scripts:
+      - name: Install dependencies and sync tools
+        script: |
+          set -eu
+          npm ci
+          npx cap sync ios
+      - name: Build unsigned simulator app
+        script: |
+          set -eu
+          xcodebuild build \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/ios-simulator \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+      - name: Package simulator artifact
+        script: |
+          set -eu
+          test -d build/ios-simulator/Build/Products/Debug-iphonesimulator/App.app
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/ios-simulator/Build/Products/Debug-iphonesimulator/App.app \
+            build/E6BT-iOS-Simulator.zip
+    artifacts:
+      - build/E6BT-iOS-Simulator.zip
   e6bt-ios:
     name: E6BT iOS signed build
     max_build_duration: 60
